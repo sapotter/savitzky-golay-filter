@@ -50,6 +50,18 @@ public class FilterTestCaseTest {
     }
 
     /**
+     * Test of testComputeSGCoefficientsDerivate method, of class FilterTestCase.
+     */
+    @Test
+    public void testTestComputeSGCoefficientsDerivative() {
+        System.out.println("testComputeSGCoefficientsDerivative");
+        FilterTestCase instance = new FilterTestCase();
+        instance.testComputeSGCoefficientsDerivative();
+        // TODO review the generated test code and remove the default call to fail.
+        //fail("The test case is a prototype.");
+    }
+
+    /**
      * Test of testSmooth1 method, of class FilterTestCase.
      */
     @Test

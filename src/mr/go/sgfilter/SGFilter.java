@@ -18,10 +18,10 @@ package mr.go.sgfilter;
 import static java.lang.Math.pow;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.math.linear.RealMatrixImpl;
+import org.apache.commons.math.linear.Array2DRowRealMatrix;
+import org.apache.commons.math.linear.LUDecompositionImpl;
 
 /**
  * Savitzky-Golay filter implementation. For more information see
@@ -29,7 +29,15 @@ import org.apache.commons.math.linear.RealMatrixImpl;
  * however, does not use FFT
  * 
  * @author Marcin Rzeźnicki
- * 
+ * @author Stephen A Potter, modified 2009-09-05
+ *
+ * @see Savitzky, A & Golay, M.J.E, "Smoothing and Differentiation of Data
+ *      by Simplified Least Squares Procedures", Analytical Chemistry, vol. 36,
+ *      no. 8, July 1964, pp. 1627-1639.
+ *
+ *      "Comments on Smoothing and Differentiation of Data by Simplified Least
+ *      Square Procedure", Analytical Chemistry, vol. 44, no. 11, Septembeer
+ *      1972, pp. 1906-1909.
  */
 public class SGFilter {
 
@@ -37,21 +45,50 @@ public class SGFilter {
      * Computes Savitzky-Golay coefficients for given parameters
      *
      * @param nl
-     *            numer of past data points filter will use
+     *          numer of past data points filter will use
      * @param nr
-     *            number of future data points filter will use
+     *          number of future data points filter will use
      * @param degree
-     *            order of smoothin polynomial
+     *          order of smoothing polynomial; also equal to the highest
+     *          conserved moment, usual values are 2 or 4.
+     *
      * @return Savitzky-Golay coefficients
      * @throws IllegalArgumentException
-     *             if {@code nl < 0} or {@code nr < 0} or {@code nl + nr <
+     *         if {@code nl < 0} or {@code nr < 0} or {@code nl + nr <
      *             degree}
      */
     public static double[] computeSGCoefficients(int nl, int nr, int degree) {
+        return computeSGCoefficients(nl, nr, degree, 0);
+    }
+
+    /**
+     * Computes Savitzky-Golay coefficients for given parameters
+     *
+     * @param nl
+     *          numer of past data points filter will use
+     * @param nr
+     *          number of future data points filter will use
+     * @param degree
+     *          order of smoothing polynomial; also equal to the highest
+     *          conserved moment, usual values are 2 or 4.
+     * @param ld
+     *          paraphrasing "NR" -- which coefficient among the a[i]'s should
+     *          be returned; for data smoothing ld = 0.  When ld >= 1,
+     *          the coefficients for the ld'th filtered derivative are computed.
+     *          To obtain the derivative, the coefficients that are returned must
+     *          be multiplied by ld!, and the convolution divided by the absolute
+     *          abscissa interval raised to the ld'th power.
+     * 
+     * @return Savitzky-Golay coefficients
+     * @throws IllegalArgumentException
+     *         if {@code nl < 0} or {@code nr < 0} or {@code nl + nr <
+     *             degree}
+     */
+    public static double[] computeSGCoefficients(int nl, int nr, int degree, int ld) {
         if (nl < 0 || nr < 0 || nl + nr < degree) {
             throw new IllegalArgumentException("Bad arguments");
         }
-        RealMatrixImpl matrix = new RealMatrixImpl(degree + 1, degree + 1);
+        Array2DRowRealMatrix matrix = new Array2DRowRealMatrix(degree + 1, degree + 1);
         double[][] a = matrix.getDataRef();
         double sum;
         for (int i = 0; i <= degree; i++) {
@@ -67,8 +104,9 @@ public class SGFilter {
             }
         }
         double[] b = new double[degree + 1];
-        b[0] = 1;
-        b = matrix.solve(b);
+        // Changing b[0] to b[ld] is all that is required for derivative.
+        b[ld] = 1;
+        b = new LUDecompositionImpl(matrix).getSolver().solve(b);
         double[] coeffs = new double[nl + nr + 1];
         for (int n = -nl; n <= nr; n++) {
             sum = b[0];
@@ -571,7 +609,7 @@ public class SGFilter {
     }
 
     private double[] arrayCopyOfRange(double[] src, int from, int to) {
-        
+
         double[] copy = new double[to - from];
         int j = 0;
         for (int i = from; i < to && i < src.length; i++) {
