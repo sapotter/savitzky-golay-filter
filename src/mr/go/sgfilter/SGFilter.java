@@ -36,7 +36,7 @@ import org.apache.commons.math.linear.LUDecompositionImpl;
  *      no. 8, July 1964, pp. 1627-1639.
  *
  *      "Comments on Smoothing and Differentiation of Data by Simplified Least
- *      Square Procedure", Analytical Chemistry, vol. 44, no. 11, Septembeer
+ *      Square Procedure", Analytical Chemistry, vol. 44, no. 11, September
  *      1972, pp. 1906-1909.
  */
 public class SGFilter {
