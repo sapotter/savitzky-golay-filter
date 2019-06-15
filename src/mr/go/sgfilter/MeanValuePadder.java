@@ -94,7 +94,7 @@ public class MeanValuePadder implements Preprocessor {
 		this.paddingRight = paddingRight;
 	}
 
-
+        @Override
 	public void apply(double[] data) {
 		// padding values with average of last (WINDOW_LENGTH / 2) points
 		int n = data.length;
@@ -173,7 +173,7 @@ public class MeanValuePadder implements Preprocessor {
 
 	/**
 	 * 
-	 * @param paddingLeft
+	 * @param paddingRight
 	 *            enables or disables right padding
 	 */
 	public void setPaddingRight(boolean paddingRight) {
