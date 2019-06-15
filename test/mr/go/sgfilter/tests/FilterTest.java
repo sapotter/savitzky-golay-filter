@@ -9,7 +9,7 @@ import mr.go.sgfilter.ZeroEliminator;
 
 import org.junit.Test;
 
-public class FilterTestCase {
+public class FilterTest {
 
     private void assertCoeffsEqual(double[] coeffs, double[] tabularCoeffs) {
         for (int i = 0; i < tabularCoeffs.length; i++) {
