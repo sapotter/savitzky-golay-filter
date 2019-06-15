@@ -62,7 +62,7 @@ public class Linearizer implements Preprocessor {
 		this.truncateRatio = truncateRatio;
 	}
 
-
+        @Override
 	public void apply(double[] data) {
 		int n = data.length - 1;
 		double[] deltas = computeDeltas(data);

@@ -26,7 +26,7 @@ package mr.go.sgfilter;
  */
 public class TrendRemover implements Preprocessor {
 
-
+        @Override
 	public void apply(double[] data) {
 		// de-trend data so to avoid boundary distortion
 		// we will achieve this by setting straight line from end to beginning

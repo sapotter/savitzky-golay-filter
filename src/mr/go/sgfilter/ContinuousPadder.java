@@ -72,8 +72,8 @@ public class ContinuousPadder implements Preprocessor {
 		this.paddingLeft = paddingLeft;
 		this.paddingRight = paddingRight;
 	}
-
 	
+        @Override
 	public void apply(double[] data) {
 		int n = data.length;
 		if (paddingLeft) {
