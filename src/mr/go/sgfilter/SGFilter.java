@@ -130,8 +130,13 @@ public class SGFilter {
             out[i] = in[i];
         }
     }
+
+    private final List<DataFilter> dataFilters = new ArrayList<DataFilter>();
+
     private int nl;
+    
     private int nr;
+    
     private final List<Preprocessor> preprocessors = new ArrayList<Preprocessor>();
 
     /**
@@ -151,6 +156,53 @@ public class SGFilter {
         }
         this.nl = nl;
         this.nr = nr;
+    }
+
+    /**
+     * Appends data filter
+     * 
+     * @param dataFilter
+     *            dataFilter
+     * @see DataFilter
+     */
+    public void appendDataFilter(DataFilter dataFilter) {
+            dataFilters.add(dataFilter);
+    }
+
+    /**
+     * Inserts data filter
+     * 
+     * @param dataFilter
+     *            data filter
+     * @param index
+     *            where it should be placed in data filters queue
+     * @see DataFilter
+     */
+    public void insertDataFilter(DataFilter dataFilter, int index) {
+            dataFilters.add(index, dataFilter);
+    }
+
+    /**
+     * Removes data filter
+     * 
+     * @param dataFilter
+     *            data filter to be removed
+     * @return {@code true} if data filter existed and was removed, {@code
+     *         false} otherwise
+     */
+    public boolean removeDataFilter(DataFilter dataFilter) {
+            return dataFilters.remove(dataFilter);
+    }
+
+    /**
+     * Removes data filter
+     * 
+     * @param index
+     *            which data filter to remove
+     * @return removed data filter
+     */
+    public DataFilter removeDataFilter(int index) {
+            return dataFilters.remove(index);
     }
 
     /**
@@ -340,6 +392,11 @@ public class SGFilter {
             throw new IllegalArgumentException(
                     "bias < 0 or bias > nr or bias > nl");
         }
+
+        for (DataFilter dataFilter : dataFilters) {
+                data = dataFilter.filter(data);
+        }
+
         int dataLength = data.length;
         if (dataLength == 0) {
             return data;
@@ -381,7 +438,7 @@ public class SGFilter {
         for (int b = bias; b > 0; b--) {
             sg = coeffs[coeffs.length - b];
             int x = (nl + bias) - b;
-            float sum = 0;
+            double sum = 0;
             for (int i = -nl + b; i <= nr; i++) {
                 sum += dataCopy[x + i] * sg[nl - b + i];
             }
@@ -389,7 +446,7 @@ public class SGFilter {
         }
         sg = coeffs[0];
         for (int x = nl + bias; x < n - nr - bias; x++) {
-            float sum = 0;
+            double sum = 0;
             for (int i = -nl; i <= nr; i++) {
                 sum += dataCopy[x + i] * sg[nl + i];
             }
@@ -398,7 +455,7 @@ public class SGFilter {
         for (int b = 1; b <= bias; b++) {
             sg = coeffs[b];
             int x = (n - nr - bias) + (b - 1);
-            float sum = 0;
+            double sum = 0;
             for (int i = -nl; i <= nr - b; i++) {
                 sum += dataCopy[x + i] * sg[nl + i];
             }
