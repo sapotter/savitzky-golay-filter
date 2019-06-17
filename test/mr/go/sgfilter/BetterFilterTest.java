@@ -2,6 +2,7 @@ package mr.go.sgfilter;
 
 import java.util.Arrays;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import mr.go.sgfilter.ContinuousPadder;
 import mr.go.sgfilter.Linearizer;
 import mr.go.sgfilter.MeanValuePadder;
@@ -15,17 +16,25 @@ public class BetterFilterTest {
 
     private void assertCoeffsEqual(double[] coeffs, double[] tabularCoeffs) {
         for (int i = 0; i < tabularCoeffs.length; i++) {
-            assertEquals(tabularCoeffs[i],
-                         coeffs[i],
-                         0.001);
+            double rDiff = relativeDifference(tabularCoeffs[i], coeffs[i]);
+            assertTrue(String.format("real | calc | rDiff: %g | %g | %g", tabularCoeffs[i], coeffs[i], rDiff),
+                      (rDiff <= 0.005));
+//            assertTrue(relativeDifference(tabularCoeffs[i], coeffs[i]) <+ 0.001);
+//            assertEquals(tabularCoeffs[i],
+//                         coeffs[i],
+//                         0.001);
         }
     }
 
     private void assertResultsEqual(double[] results, double[] real, double delta) {
         for (int i = 0; i < real.length; i++) {
-            assertEquals(real[i],
-                         results[i],
-                         delta);
+            double rDiff = relativeDifference(real[i], results[i]);
+            assertTrue(String.format("real | calc | rDiff:: %g | %g | %g", real[i], results[i], rDiff),
+                      rDiff <= delta);
+//            assertTrue(relativeDifference(real[i], results[i]) < delta);
+//            assertEquals(real[i],
+//                         results[i],
+//                         delta);
         }
     }
     
@@ -35,9 +44,13 @@ public class BetterFilterTest {
 
     private void assertResultsEqual(float[] results, double[] real, double delta) {
         for (int i = 0; i < real.length; i++) {
-            assertEquals(real[i],
-                         results[i],
-                         delta);
+            double rDiff = relativeDifference(real[i], results[i]);
+            assertTrue(String.format("real | calc | rDiff:: %g | %g | %g", real[i], results[i], rDiff),
+                      rDiff <= delta);
+//            assertTrue(relativeDifference(real[i], results[i]) < delta);
+//             assertEquals(real[i],
+//                         results[i],
+//                         delta);
         }
     }
     
@@ -47,9 +60,13 @@ public class BetterFilterTest {
 
     private void assertResultsEqual(float[] results, float[] real, double delta) {
         for (int i = 0; i < real.length; i++) {
-            assertEquals(real[i],
-                         results[i],
-                         delta);
+            double rDiff = relativeDifference(real[i], results[i]);
+            assertTrue(String.format("real | calc | rDiff:: %g | %g | %g", real[i], results[i], rDiff),
+                      rDiff <= delta);
+//            assertTrue(relativeDifference(real[i], results[i]) < delta);
+//            assertEquals(real[i],
+//                         results[i],
+//                         delta);
         }
     }
     
@@ -57,6 +74,23 @@ public class BetterFilterTest {
         assertResultsEqual(results, real, 0.001);
     }
 
+    private double relativeDifference(double real, double result) {
+        double ref = Math.max(Math.abs(real), Math.abs(result));
+        if (ref == 0.0) {
+            return 0.0;
+        } else {
+           return Math.abs(result - real)/ref;
+        }
+    }
+
+    private float relativeDifference(double real, float result) {
+       return (float) relativeDifference(real, (double) result);
+    }
+    
+    private float relativeDifference(float real, float result) {
+       return (float) relativeDifference((double) real, (double) result);
+    }
+    
     @Test
     public final void testComputeSGCoefficients() {
         double[] coeffs = SGFilter.computeSGCoefficients(5,
@@ -83,13 +117,13 @@ public class BetterFilterTest {
                                                 4);
         tabularCoeffs = new double[]{0.042,
                                      -0.105,
-                                     -0.023,
+                                     -0.0233,
                                      0.140,
                                      0.280,
                                      0.333,
                                      0.280,
                                      0.140,
-                                     -0.023,
+                                     -0.0233,
                                      -0.105,
                                      0.042};
         assertEquals(11,
@@ -140,7 +174,6 @@ public class BetterFilterTest {
                                          5,
                                          10,
                                          coeffs);
-        System.out.println("testDouglasPeuckerFilter smooth: " + Arrays.toString(smooth));
         assertResultsEqual(smooth,
                            real);
     }
@@ -314,9 +347,8 @@ public class BetterFilterTest {
                     coeffs5_5,
                     coeffs5_4,
                     coeffs4_5});
-        System.out.println("testSmoothWithBias smooth: " + Arrays.toString(smooth));
         assertResultsEqual(smooth,
                            real,
-                           .01);
+                           .001);
     }
 }
