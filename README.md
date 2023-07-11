@@ -16,7 +16,7 @@ This implementation, however, does not use FFT.
 for the original source code.
 * Sylvain Wallez has an automatically exported version from the Google Code Archive in GitHub
 [swallez/savitzky-golay-filter](https://github.com/swallez/savitzky-golay-filter)
-* The project is organized as a NetBeans project.
+* The original NetBeans project has been converted to Maven as groupID:artifactID = mr.go:sgfilter with jar packaging.
 
 #### References:
 1. Savitzky, A & Golay, M.J.E, "Smoothing and Differentiation of Data by Simplified Least
