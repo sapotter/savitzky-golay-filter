@@ -21,8 +21,10 @@ import static java.lang.Math.pow;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.math.linear.Array2DRowRealMatrix;
-import org.apache.commons.math.linear.LUDecompositionImpl;
+import org.apache.commons.math3.linear.Array2DRowRealMatrix;
+import org.apache.commons.math3.linear.ArrayRealVector;
+import org.apache.commons.math3.linear.LUDecomposition;
+import org.apache.commons.math3.linear.RealVector;
 
 /**
  * Savitzky-Golay filter implementation. For more information see
@@ -107,7 +109,15 @@ public class SGFilter {
         double[] b = new double[degree + 1];
         // Changing b[0] to b[ld] is all that is required for derivative.
         b[ld] = 1;
-        b = new LUDecompositionImpl(matrix).getSolver().solve(b);
+        ArrayRealVector bv = new ArrayRealVector(b);
+        /*
+         * Solve A * x = b
+         * Solvers like LUDecomposition can only find the solution for square
+         * matrices and when the solution is an exact linear solution,
+         * i.e. when ||A × X - B|| is exactly 0.
+         */
+        RealVector xv = new LUDecomposition(matrix).getSolver().solve(bv);
+        b = xv.toArray();
         double[] coeffs = new double[nl + nr + 1];
         for (int n = -nl; n <= nr; n++) {
             sum = b[0];
