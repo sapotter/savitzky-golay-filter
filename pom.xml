@@ -27,6 +27,8 @@
             <id>compile-8</id>
             <properties>
                 <maven.compiler.release>8</maven.compiler.release>
+                <maven.compiler.source>1.8</maven.compiler.source>
+                <maven.compiler.target>1.8</maven.compiler.target>
             </properties>
         </profile>
     </profiles>
